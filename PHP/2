@@ -1,0 +1,26 @@
+class TextInput
+{
+    protected $value = '';
+
+    public function add($text)
+    {
+        $this->value .= $text;
+    }
+
+    public function getValue()
+    {
+        return $this->value;
+    }
+}
+
+class NumericInput extends TextInput
+{
+    public function add($text)
+    {
+        // Sprawdzamy, czy podany tekst zawiera tylko cyfry
+        if (ctype_digit($text)) {
+            // Dodajemy tylko cyfry do wartości
+            parent::add($text);
+        }
+    }
+}
