@@ -1,0 +1,56 @@
+use Illuminate\Database\Eloquent\Model;
+
+class Customer extends Model
+{
+    protected $table = 'customers';
+
+    // Relacja z modelem Employee - jeden do jeden (pracownik przypisany do klienta)
+    public function employee()
+    {
+        return $this->hasOne(Employee::class);
+    }
+
+    // Relacja z modelem Order - jeden do wielu (zamówienia klienta)
+    public function orders()
+    {
+        return $this->hasMany(Order::class);
+    }
+}
+
+
+class Employee extends Model
+{
+    protected $table = 'employees';
+
+    // Relacja z modelem Customer - jeden do jeden (klient przypisany do pracownika)
+    public function customer()
+    {
+        return $this->belongsTo(Customer::class);
+    }
+}
+
+class Order extends Model
+{
+    protected $table = 'orders';
+
+    // Relacja z modelem Customer - jeden do wielu (zamówienie przypisane do klienta)
+    public function customer()
+    {
+        return $this->belongsTo(Customer::class);
+    }
+}
+
+$customerId = 1; // ID klienta, dla którego chcemy uzyskać informacje
+
+$customer = Customer::with('employee', 'orders')->find($customerId);
+
+// Informacje o kliencie
+echo "Customer Name: " . $customer->name . "\n";
+// Informacje o pracowniku przypisanym do klienta
+if ($customer->employee) {
+    echo "Employee Name: " . $customer->employee->name . "\n";
+}
+// Informacje o ostatnich zamówieniach klienta
+foreach ($customer->orders as $order) {
+    echo "Order ID: " . $order->id . ", Total Amount: " . $order->total_amount . "\n";
+}
