@@ -1,0 +1,36 @@
+<?php
+class Pipeline
+{
+    public static function make(...$functions)
+    {
+        return function ($arg) use ($functions) {
+            $result = $arg;
+            foreach ($functions as $function) {
+                $result = $function($result);
+            }
+            return $result;
+        };
+    }
+}
+
+// Przykładowe funkcje do testowania
+$multiply = function ($x) {
+    return $x * 3;
+};
+
+$increment = function ($x) {
+    return $x + 1;
+};
+
+$division = function ($x) {
+    return $x /2;
+};
+
+
+$pipeline = Pipeline::make($multiply,$increment, $division);
+
+// Wywołujemy stworzoną funkcję pipeline z argumentem 5
+$result = $pipeline(10);
+
+echo $result; 
+?>
