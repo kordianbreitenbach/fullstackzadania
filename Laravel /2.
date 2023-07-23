@@ -1,0 +1,45 @@
+use Illuminate\Database\Eloquent\Model;
+
+class User extends Model
+{
+    protected $table = 'users';
+
+    public function cars()
+    {
+        return $this->belongsToMany(Car::class, 'user_car')->withPivot('start_date', 'end_date');
+    }
+}
+
+class Car extends Model
+{
+    protected $table = 'cars';
+
+    public function users()
+    {
+        return $this->belongsToMany(User::class, 'user_car')->withPivot('start_date', 'end_date');
+    }
+}
+
+$user = User::find(1);
+$car = Car::find(2);
+
+$user->cars()->attach($car, [
+    'start_date' => '2023-07-01',
+    'end_date' => '2023-07-15'
+]);
+
+$userId = 1;
+$carId = 2;
+$now = now();
+
+$isUsingCar = User::find($userId)->cars()
+    ->wherePivot('car_id', $carId)
+    ->where('start_date', '<=', $now)
+    ->where('end_date', '>=', $now)
+    ->exists();
+
+if ($isUsingCar) {
+    echo "Użytkownik korzysta z samochodu w tym momencie.";
+} else {
+    echo "Użytkownik nie korzysta z samochodu w tym momencie.";
+}
